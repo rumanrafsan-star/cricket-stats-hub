@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Trophy } from 'lucide-react';
+import { Menu, X, Trophy, LogOut } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const navLinks = [
   { name: 'Home', href: '#home' },
@@ -15,6 +17,12 @@ const navLinks = [
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { session, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    setIsMobileMenuOpen(false);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -86,17 +94,54 @@ export default function Navigation() {
               ))}
             </div>
 
-            {/* CTA Button */}
-            <div className="hidden lg:block">
-              <Button
-                className={`rounded-full px-6 transition-all duration-300 ${
-                  isScrolled
-                    ? 'bg-primary hover:bg-cricket-gold-hover text-primary-foreground'
-                    : 'bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20'
-                }`}
-              >
-                Get App
-              </Button>
+            {/* Auth Buttons */}
+            <div className="hidden lg:flex items-center gap-2">
+              {session ? (
+                <>
+                  <span className={`text-sm font-medium ${isScrolled ? 'text-foreground' : 'text-white'}`}>
+                    {session.user?.email}
+                  </span>
+                  <Button
+                    onClick={handleSignOut}
+                    variant="outline"
+                    size="sm"
+                    className={`rounded-full ${
+                      isScrolled
+                        ? 'border-primary text-primary hover:bg-primary/10'
+                        : 'border-white/20 text-white hover:bg-white/10'
+                    }`}
+                  >
+                    <LogOut className="w-4 h-4 mr-1" />
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login">
+                    <Button
+                      variant="ghost"
+                      className={`rounded-full ${
+                        isScrolled
+                          ? 'text-foreground hover:bg-muted'
+                          : 'text-white hover:bg-white/10'
+                      }`}
+                    >
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link to="/signup">
+                    <Button
+                      className={`rounded-full px-6 transition-all duration-300 ${
+                        isScrolled
+                          ? 'bg-primary hover:bg-cricket-gold-hover text-primary-foreground'
+                          : 'bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20'
+                      }`}
+                    >
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -138,9 +183,36 @@ export default function Navigation() {
                 {link.name}
               </a>
             ))}
-            <Button className="mt-4 bg-primary hover:bg-cricket-gold-hover text-primary-foreground rounded-full">
-              Get App
-            </Button>
+            <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-border">
+              {session ? (
+                <>
+                  <div className="px-4 py-2 text-sm text-muted-foreground">
+                    {session.user?.email}
+                  </div>
+                  <Button
+                    onClick={handleSignOut}
+                    variant="outline"
+                    className="rounded-full"
+                  >
+                    <LogOut className="w-4 h-4 mr-1" />
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="outline" className="w-full rounded-full">
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button className="w-full bg-primary hover:bg-cricket-gold-hover text-primary-foreground rounded-full">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
