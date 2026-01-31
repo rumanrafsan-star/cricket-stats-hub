@@ -101,6 +101,19 @@ export default function Navigation() {
                   <span className={`text-sm font-medium ${isScrolled ? 'text-foreground' : 'text-white'}`}>
                     {session.user?.email}
                   </span>
+                  <Link to="/profile">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={`rounded-full ${
+                        isScrolled
+                          ? 'border-primary text-primary hover:bg-primary/10'
+                          : 'border-white/20 text-white hover:bg-white/10'
+                      }`}
+                    >
+                      Dashboard
+                    </Button>
+                  </Link>
                   <Button
                     onClick={handleSignOut}
                     variant="outline"
@@ -189,6 +202,11 @@ export default function Navigation() {
                   <div className="px-4 py-2 text-sm text-muted-foreground">
                     {session.user?.email}
                   </div>
+                  <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="outline" className="w-full rounded-full">
+                      Dashboard
+                    </Button>
+                  </Link>
                   <Button
                     onClick={handleSignOut}
                     variant="outline"
